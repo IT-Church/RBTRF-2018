@@ -16,7 +16,7 @@ _FWDT(WDT_OFF);
 
 unsigned char flag = 0x00, i = 0, init = 1, f = 1, traffic_data, y = 1;
 
-unsigned int  ch = 0, w = 0, pwm = 0x0200, test = 0xd356, temp, dir=1, mode=0, black=700, stoptimer = 6000, flag1, add = 0,curservo = 2650, prevservo = 2650, firstirda = 0, num1, num2;
+unsigned int  ch = 0, w = 0, pwm = 0x0200, test = 0xd356, temp, dir=1, mode=0, black=850, stoptimer = 6000, flag1, add = 0,curservo = 2650, prevservo = 2650, firstirda = 0, num1, num2;
 
 float        sl3 = 0,   /* AN0, stripe sensor -> left 3 */
              sl2 = 0,   /* AN1, stripe sensor -> left 2 */
@@ -109,8 +109,6 @@ void recalc(){
 	sr3 = datch[6];
 	ss = datch[7];
 }
-
-
 
 
 void initialization (void)
@@ -220,7 +218,7 @@ void _ISR  __attribute__((auto_psv))  _T1Interrupt( void)
 
 		if( y == 1)
     	{
-	    	printf("Robotraffic 2012, A2D test \n");
+//	    	printf("Robotraffic 2012, A2D test \n");
 	    	y = 0;
 
     	}  
@@ -240,14 +238,7 @@ void _ISR  __attribute__((auto_psv))  _T1Interrupt( void)
 		if ( flag1 == 0x01ff)
 		{
 //			printf( " irDa = {%d}  \n",(int)received_data [0]);
-//			printf( " SL3 = %d \n", a2d_data[0x00]);
-//			printf( " SL2 = %d \n", a2d_data[0x01]);
-//			printf( " SL1 = %d \n", a2d_data[0x02]);
-//			printf( " SC = %d \n", a2d_data[0x03]);
-//			printf( " SR1 = %d \n", a2d_data[0x04]);
-//			printf( " SR2 = %d \n", a2d_data[0x05]);
-//			printf( " SR3 = %d \n", a2d_data[0x06]);
-//		printf( " SS = %d \n", a2d_data[0x07]);
+//			debug_print_datch();
 //			printf( " FL = %d \t", a2d_data[0x08]);  //fl - center
 //			printf( " FR = %d \t", a2d_data[0x09]);  //fr - left
 //		printf( " RL = %d \t", a2d_data[0x0a]);      // rl - right
@@ -282,26 +273,25 @@ Go Straight         = 0x07, *
 Go Left             = 0x08, *
 Go Right            = 0x09. *
 
+*/
 uart1A_IrDA_init();
 
-*/
-                switch ((int)received_data [0])
+                /*switch ((int)received_data [0])
                 {
                              
-                        case 0x00:  if(mode != 1) mode = 2; break; 
-						case 0x01:  if(mode != 1) mode = 2; break;  
-                        case 0x02:  mode = 0; break;
-                        case 0x03:  mode = 0; break;
-                        case 0x04:  if(mode != 1) mode = 2; break;
-						case 0x06:  mode = 3; break;
-                        default:  if(!(rl > 1100 || rr > 1100 || fl > 1100 || fr > 1100))mode = 0; break;
-                }
-			if(!firstirda && mode != 1) mode = 2; 
+                        case 0x00:  //if(mode != 1) mode = 2; break; 
+						case 0x01:  //if(mode != 1) mode = 2; break;  
+                        case 0x02: // mode = 0; break;
+                        case 0x03: // mode = 0; break;
+                        case 0x04: // if(mode != 1) mode = 2; break;
+						case 0x06: // mode = 3; break;
+                        default:  //if(!(rl > 1100 || rr > 1100 || fl > 1100 || fr > 1100))mode = 0; break;
+                }*/
+		//	if(!firstirda && mode != 1) mode = 2; 
 			if( flag == 0x07){	flag = 0x0;}		
 		
 
 /*===================================CODE========================================*/
-
 	masssum = 0;
 	momsum = 0; 
 	for(num1 = 0; num1 < N-1; num1++){
@@ -320,8 +310,7 @@ uart1A_IrDA_init();
 	if(sc > black) {turns++;}
 	if(turns == 1 && sl3 > black) add = 500;
 	if(turns == 1 && sr3 > black) add = -500;
-
-
+	//printf("%0.2f %0.2f %0.2f\n", momsum,masssum, momsum / masssum); 
 /* ================================= Send data to PC Terminal ===============================*/ 
 
 /* ================================= Car driving controll =================================*/ 
@@ -483,7 +472,8 @@ void a2d_sensors (void)
         
    }    
 /***********************************************************/ 
-       for(num1 = 0; num1 < N; num1++){
+		
+		for(num1 = 0; num1 < N; num1++){
 			for(num2 = 0; num2 < M-1; num2++){
 				vals[num1][num2] = vals[num1][num2+1];
 			}	
@@ -504,8 +494,8 @@ void a2d_sensors (void)
         sr1 = mapper(a2d_data[0x04], mins[4],maxs[4],0,1000);// * 1.2765;;
         sr2 = mapper(a2d_data[0x05], mins[5],maxs[5],0,1000);// * 0.80808;
         sr3 = mapper(a2d_data[0x06], mins[6],maxs[6],0,1000);// * 0.9756;
-        ss =  mapper(a2d_data[0x07], mins[7],maxs[7],0,1000);// * 0.00122;
-        */             
+        ss =  mapper(a2d_data[0x07], mins[7],maxs[7],0,1000);// * 0.00122;*/
+/* */              
         fl = a2d_data[0x08];//* 0.00122;
         fr = a2d_data[0x09];// * 0.00122;
         rl = a2d_data[0x0a];// *0.00122;
@@ -624,16 +614,21 @@ void SPI1_A2D_init (void)
 /*======================================================*/	
 /*======================================================*/ 
 
+
+
 void recount(void){
 	if(masssum > 1500)
 		curservo = max(2650-690, min(2650 + 690, 2650 + mapper(momsum / masssum, -20, 20, -690, 690) + add));		
 	else {
+		pwm = 850;
 		curservo = prevservo;
 		PDC1 = curservo;
 		return;
 	}
+	pwm = 850;
 	if(abs(curservo - 2650) > 200){
-		curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo) + add;	
+		curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo) + add;
+		pwm = 800;	
 	}
 	prevservo = curservo;
 	PDC1 = curservo;
@@ -645,33 +640,19 @@ int main (void)
 	initialization ();
 	uart2_rs232_init ();
 	mode = 0;
-    while(1)
+	pwm = 800;
+	printf( " SL3 \t");
+	printf( " SL2 \t");
+	printf( " SL1 \t");
+	printf( " SC \t");
+	printf( " SR1 \t");
+	printf( " SR2 \t");
+	printf( " SR3 \t");
+	printf( " SS \t");
+	printf("\n");
+	while(1)
     {
 		recount();
-		if(rl > 1500 || rr > 1500 || fl > 2500 || fr > 1500) mode = 1;
-		if(mode == 0){
-			pwm = 800;
-			//PORTEbits.RE1 = 0;
-		}
-		else if(mode == 1){
-			pwm = 0;
-			//PORTEbits.RE1 = 1;
-		}
-		else if(mode == 2){
-			pwm = 750;
-			if(ss > black && abs(curservo - 2650) < 150 && turns < 7) mode = 1;
-			//PORTEbits.RE1 = 1;
-		}
-		else if(mode == 3){
-			while(stoptimer){
-				//PORTEbits.RE1 = 1;
-				pwm = 0;
-				stoptimer--;
-			}
-			pwm = 750;
-			mode = 0;
-		}
-
 	}
 
        

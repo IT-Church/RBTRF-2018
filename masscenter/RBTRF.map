@@ -1,4 +1,4 @@
-Microchip Technology Inc, vv3_31 (A) 0.CÇe:
+Microchip Technology Inc, vv3_31 (A) c3mF­G.
 
 Tool Name:
   c:\program files (x86)\microchip\mplabc30\v3.31\bin\bin\..\bin/pic30-coff-ld.exe
@@ -127,11 +127,11 @@ Program Memory  [Origin = 0x100, Length = 0x7efe]
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x100              0x17a8          0x237c  (9084)
-.const                      0x18a8                0x9e            0xed  (237)
-.text                       0x1946               0xdae          0x1485  (5253)
-.dinit                      0x26f4               0x242           0x363  (867)
+.const                      0x18a8                0xb8           0x114  (276)
+.text                       0x1960               0xc2a          0x123f  (4671)
+.dinit                      0x258a               0x242           0x363  (867)
 
-                     Total program memory used (bytes):         0x3c51  (15441) 31%
+                     Total program memory used (bytes):         0x3a32  (14898) 30%
 
 
 Data Memory  [Origin = 0x800, Length = 0x800]
@@ -338,33 +338,33 @@ External Symbols in Program Memory (by address):
                   0x000cb8                  __dtype
                   0x000cdc                  __printf_cdfFnopuxX
                   0x000d98                  __vfprintf_cdfFnopuxX
-                  0x001946                  _mapper
-                  0x001990                  _max
-                  0x0019be                  _min
-                  0x0019ec                  _debug_output_convertation
-                  0x001a82                  _debug_print_datch
-                  0x001af8                  _recalc
-                  0x001b3e                  _initialization
-                  0x001c1c                  __T1Interrupt
-                  0x00206c                  __T2Interrupt
-                  0x002080                  __T3Interrupt
-                  0x002094                  __U1RXInterrupt
-                  0x0020e2                  _uart2_rs232_init
-                  0x002104                  _uart1A_IrDA_init
-                  0x002128                  _putch
-                  0x00213e                  _a2d_sensors
-                  0x0023c0                  _SPI1_A2D_init
-                  0x0024e8                  _recount
-                  0x002608                  _main
+                  0x001960                  _mapper
+                  0x0019aa                  _max
+                  0x0019d8                  _min
+                  0x001a06                  _debug_output_convertation
+                  0x001a9c                  _debug_print_datch
+                  0x001b12                  _recalc
+                  0x001b58                  _initialization
+                  0x001c36                  __T1Interrupt
+                  0x001f84                  __T2Interrupt
+                  0x001f98                  __T3Interrupt
+                  0x001fac                  __U1RXInterrupt
+                  0x001ffa                  _uart2_rs232_init
+                  0x00201c                  _uart1A_IrDA_init
+                  0x002040                  _putch
+                  0x002056                  _a2d_sensors
+                  0x0022d8                  _SPI1_A2D_init
+                  0x002400                  _recount
+                  0x00252c                  _main
 
 External Symbols in Program Memory (by name):
 
-                  0x0023c0                  _SPI1_A2D_init
+                  0x0022d8                  _SPI1_A2D_init
                   0x000190                  __DefaultInterrupt
-                  0x001c1c                  __T1Interrupt
-                  0x00206c                  __T2Interrupt
-                  0x002080                  __T3Interrupt
-                  0x002094                  __U1RXInterrupt
+                  0x001c36                  __T1Interrupt
+                  0x001f84                  __T2Interrupt
+                  0x001f98                  __T3Interrupt
+                  0x001fac                  __U1RXInterrupt
                   0x0006c0                  ___adddf3
                   0x000204                  ___addsf3
                   0x00081c                  ___divdf3
@@ -418,20 +418,20 @@ External Symbols in Program Memory (by name):
                   0x000122                  __psv_init
                   0x000100                  __resetPRI
                   0x000d98                  __vfprintf_cdfFnopuxX
-                  0x00213e                  _a2d_sensors
-                  0x0019ec                  _debug_output_convertation
-                  0x001a82                  _debug_print_datch
+                  0x002056                  _a2d_sensors
+                  0x001a06                  _debug_output_convertation
+                  0x001a9c                  _debug_print_datch
                   0x0006b0                  _frexpf
-                  0x001b3e                  _initialization
-                  0x002608                  _main
-                  0x001946                  _mapper
-                  0x001990                  _max
-                  0x0019be                  _min
-                  0x002128                  _putch
-                  0x001af8                  _recalc
-                  0x0024e8                  _recount
-                  0x002104                  _uart1A_IrDA_init
-                  0x0020e2                  _uart2_rs232_init
+                  0x001b58                  _initialization
+                  0x00252c                  _main
+                  0x001960                  _mapper
+                  0x0019aa                  _max
+                  0x0019d8                  _min
+                  0x002040                  _putch
+                  0x001b12                  _recalc
+                  0x002400                  _recount
+                  0x00201c                  _uart1A_IrDA_init
+                  0x001ffa                  _uart2_rs232_init
 
 Memory Configuration
 
@@ -689,13 +689,13 @@ userdata
                   0x000014          0x4 LONG 0x190 DEFINED (__INT0Interrupt)?ABSOLUTE (__INT0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000016          0x4 LONG 0x190 DEFINED (__IC1Interrupt)?ABSOLUTE (__IC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000018          0x4 LONG 0x190 DEFINED (__OC1Interrupt)?ABSOLUTE (__OC1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00001a          0x4 LONG 0x1c1c DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00001a          0x4 LONG 0x1c36 DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00001c          0x4 LONG 0x190 DEFINED (__IC2Interrupt)?ABSOLUTE (__IC2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00001e          0x4 LONG 0x190 DEFINED (__OC2Interrupt)?ABSOLUTE (__OC2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000020          0x4 LONG 0x206c DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000022          0x4 LONG 0x2080 DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000020          0x4 LONG 0x1f84 DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000022          0x4 LONG 0x1f98 DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000024          0x4 LONG 0x190 DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000026          0x4 LONG 0x2094 DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000026          0x4 LONG 0x1fac DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000028          0x4 LONG 0x190 DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00002a          0x4 LONG 0x190 DEFINED (__ADCInterrupt)?ABSOLUTE (__ADCInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00002c          0x4 LONG 0x190 DEFINED (__NVMInterrupt)?ABSOLUTE (__NVMInterrupt):ABSOLUTE (__DefaultInterrupt)
@@ -753,13 +753,13 @@ userdata
                   0x000094          0x4 LONG 0x190 DEFINED (__AltINT0Interrupt)?ABSOLUTE (__AltINT0Interrupt):DEFINED (__INT0Interrupt)?ABSOLUTE (__INT0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000096          0x4 LONG 0x190 DEFINED (__AltIC1Interrupt)?ABSOLUTE (__AltIC1Interrupt):DEFINED (__IC1Interrupt)?ABSOLUTE (__IC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000098          0x4 LONG 0x190 DEFINED (__AltOC1Interrupt)?ABSOLUTE (__AltOC1Interrupt):DEFINED (__OC1Interrupt)?ABSOLUTE (__OC1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00009a          0x4 LONG 0x1c1c DEFINED (__AltT1Interrupt)?ABSOLUTE (__AltT1Interrupt):DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00009a          0x4 LONG 0x1c36 DEFINED (__AltT1Interrupt)?ABSOLUTE (__AltT1Interrupt):DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00009c          0x4 LONG 0x190 DEFINED (__AltIC2Interrupt)?ABSOLUTE (__AltIC2Interrupt):DEFINED (__IC2Interrupt)?ABSOLUTE (__IC2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00009e          0x4 LONG 0x190 DEFINED (__AltOC2Interrupt)?ABSOLUTE (__AltOC2Interrupt):DEFINED (__OC2Interrupt)?ABSOLUTE (__OC2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x0000a0          0x4 LONG 0x206c DEFINED (__AltT2Interrupt)?ABSOLUTE (__AltT2Interrupt):DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x0000a2          0x4 LONG 0x2080 DEFINED (__AltT3Interrupt)?ABSOLUTE (__AltT3Interrupt):DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x0000a0          0x4 LONG 0x1f84 DEFINED (__AltT2Interrupt)?ABSOLUTE (__AltT2Interrupt):DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x0000a2          0x4 LONG 0x1f98 DEFINED (__AltT3Interrupt)?ABSOLUTE (__AltT3Interrupt):DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x0000a4          0x4 LONG 0x190 DEFINED (__AltSPI1Interrupt)?ABSOLUTE (__AltSPI1Interrupt):DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x0000a6          0x4 LONG 0x2094 DEFINED (__AltU1RXInterrupt)?ABSOLUTE (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x0000a6          0x4 LONG 0x1fac DEFINED (__AltU1RXInterrupt)?ABSOLUTE (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x0000a8          0x4 LONG 0x190 DEFINED (__AltU1TXInterrupt)?ABSOLUTE (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x0000aa          0x4 LONG 0x190 DEFINED (__AltADCInterrupt)?ABSOLUTE (__AltADCInterrupt):DEFINED (__ADCInterrupt)?ABSOLUTE (__ADCInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x0000ac          0x4 LONG 0x190 DEFINED (__AltNVMInterrupt)?ABSOLUTE (__AltNVMInterrupt):DEFINED (__NVMInterrupt)?ABSOLUTE (__NVMInterrupt):ABSOLUTE (__DefaultInterrupt)
@@ -1688,29 +1688,29 @@ __c30_signature
  .data              0x0c04          0x2 c:/program files (x86)/microchip/mplabc30/v3.31/bin/bin/../../lib\libpic30-coff.a(c30_uart.o)
                     0x0c04                  __C30_UART
 
-.const              0x98a8         0x9e load address 0x0018a8  
- .const             0x98a8         0x9e main.o
+.const              0x98a8         0xb8 load address 0x0018a8  
+ .const             0x98a8         0xb8 main.o
 
-.text             0x001946        0xdae
- .text            0x001946        0xdae main.o
-                  0x001946                  mapper
-                  0x001990                  max
-                  0x0019be                  min
-                  0x0019ec                  debug_output_convertation
-                  0x001a82                  debug_print_datch
-                  0x001af8                  recalc
-                  0x001b3e                  initialization
-                  0x001c1c                  _T1Interrupt
-                  0x00206c                  _T2Interrupt
-                  0x002080                  _T3Interrupt
-                  0x002094                  _U1RXInterrupt
-                  0x0020e2                  uart2_rs232_init
-                  0x002104                  uart1A_IrDA_init
-                  0x002128                  putch
-                  0x00213e                  a2d_sensors
-                  0x0023c0                  SPI1_A2D_init
-                  0x0024e8                  recount
-                  0x002608                  main
+.text             0x001960        0xc2a
+ .text            0x001960        0xc2a main.o
+                  0x001960                  mapper
+                  0x0019aa                  max
+                  0x0019d8                  min
+                  0x001a06                  debug_output_convertation
+                  0x001a9c                  debug_print_datch
+                  0x001b12                  recalc
+                  0x001b58                  initialization
+                  0x001c36                  _T1Interrupt
+                  0x001f84                  _T2Interrupt
+                  0x001f98                  _T3Interrupt
+                  0x001fac                  _U1RXInterrupt
+                  0x001ffa                  uart2_rs232_init
+                  0x00201c                  uart1A_IrDA_init
+                  0x002040                  putch
+                  0x002056                  a2d_sensors
+                  0x0022d8                  SPI1_A2D_init
+                  0x002400                  recount
+                  0x00252c                  main
 
-.dinit            0x0026f4        0x242
- .dinit           0x0026f4        0x242 data_init
+.dinit            0x00258a        0x242
+ .dinit           0x00258a        0x242 data_init

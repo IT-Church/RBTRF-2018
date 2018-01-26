@@ -4,7 +4,7 @@ const int Y = 3;
 const int G = 4;
 volatile char  Signal;
 void timer_handle_interrupts(int timer) {
-  Serial.println(Signal, HEX);
+  Serial.write(Signal);
 }
 
 void setup() {

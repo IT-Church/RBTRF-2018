@@ -7,17 +7,15 @@
 #define SDA_line RC4
 #define SCL_tris TRISC3
 #define SDA_tris TRISC4
-#define N 8
-#define M 5
+#define __N (long long)200000
 #define ACK  1
 #define NACK 0
 _FOSC(CSW_FSCM_OFF & XT_PLL8);
 _FWDT(WDT_OFF);
 
 unsigned char flag = 0x00, i = 0, init = 1, f = 1, traffic_data, y = 1;
-
-unsigned int  ch = 0, w = 0, pwm = 0x0200, test = 0xd356, temp, dir=1, mode=0, black=700, stoptimer = 6000, flag1, add = 0,curservo = 2650, prevservo = 2650, firstirda = 0, num1, num2;
-
+unsigned int  ch = 0, w = 0, pwm = 0x0200, test = 0xd356, temp, dir=1, mode=0, datch=330, stoptimer = 6000, flag1, add = 0,curservo = 2650, prevservo = 2650, firstirda = 0, num1, num2;
+long long turntimer = __N;
 float        sl3 = 0,   /* AN0, stripe sensor -> left 3 */
              sl2 = 0,   /* AN1, stripe sensor -> left 2 */
              sl1 = 0,   /* AN2, stripe sensor -> left 1 */
@@ -32,7 +30,7 @@ float        sl3 = 0,   /* AN0, stripe sensor -> left 3 */
              rl,    /* AN10, left rear distance sensor */
              rr,    /* AN11, right rear distance sensor */
 			 turn,
-			turns, srval, masssum, momsum;
+			turns;
           
 
 	        
@@ -53,64 +51,6 @@ void uart2_rs232_init (void);
 void putch (char byte);
 
 /*======================================================*/
-
-float mapper(float val, float smin,float smax, float dmin, float dmax){
-	return ((val - smin) / (smax - smin)) * (dmax- dmin) + dmin;
-}
-
-int mins[] = {
-	56, 83, 79, 83, 71, 93, 67, 63 	
-};
-int maxs[] = {
-	1781, 1800, 1273, 1049, 1317, 1716, 1934, 1693
-}; 
-float vals[N][M];
-float datch[N];
-float dists[] = {40, 30, 17, 0, -17, -30, -40};
-
-float max(float a, float b){
-	if(a>b)return a;
-	return b;
-}
-float min(float a, float b){
-	if(a<b) return a;
-	return b;
-}
-
-void debug_output_convertation(){
-			printf( "SL3 %d - %f \n", a2d_data[0x00],sl3);
-			printf( "SL2 %d - %f \n", a2d_data[0x01],sl2);
-			printf( "SL1 %d - %f \n", a2d_data[0x02],sl1);
-			printf( "SC %d - %f \n", a2d_data[0x03],sc);
-			printf( "SR1 %d - %f \n",a2d_data[0x04],sr1);
-			printf( "SR2 %d - %f \n", a2d_data[0x05],sr2);
-			printf( "SR3 %d - %f \n", a2d_data[0x06],sr3);
-			printf( "SS %d - %f \n", a2d_data[0x07],ss);
-}
-
-void debug_print_datch(){
-			printf( " %.03f \t", sl3);
-			printf( " %.03f \t", sl2);
-			printf( " %.03f \t", sl1);
-			printf( " %.03f \t", sc);
-			printf( " %.03f \t", sr1);
-			printf( " %.03f \t", sr2);
-			printf( " %.03f \t", sr3);
-			printf( " %.03f \n", ss);
-}
-
-void recalc(){
-	sl3 = datch[0];
-	sl2 = datch[1];
-	sl1 = datch[2];
-	sc = datch[3];
-	sr1 = datch[4];
-	sr2 = datch[5];
-	sr3 = datch[6];
-	ss = datch[7];
-}
-
-
 
 
 void initialization (void)
@@ -248,7 +188,7 @@ void _ISR  __attribute__((auto_psv))  _T1Interrupt( void)
 //			printf( " SR2 = %d \n", a2d_data[0x05]);
 //			printf( " SR3 = %d \n", a2d_data[0x06]);
 //		printf( " SS = %d \n", a2d_data[0x07]);
-//			printf( " FL = %d \t", a2d_data[0x08]);  //fl - center
+//			printf( " FL = %d \n", a2d_data[0x08]);  //fl - center
 //			printf( " FR = %d \t", a2d_data[0x09]);  //fr - left
 //		printf( " RL = %d \t", a2d_data[0x0a]);      // rl - right
 //		printf( " RR = %d \t", a2d_data[0x0b]);
@@ -285,41 +225,24 @@ Go Right            = 0x09. *
 uart1A_IrDA_init();
 
 */
-                switch ((int)received_data [0])
-                {
-                             
-                        case 0x00:  if(mode != 1) mode = 2; break; 
-						case 0x01:  if(mode != 1) mode = 2; break;  
-                        case 0x02:  mode = 0; break;
-                        case 0x03:  mode = 0; break;
-                        case 0x04:  if(mode != 1) mode = 2; break;
-						case 0x06:  mode = 3; break;
-                        default:  if(!(rl > 1100 || rr > 1100 || fl > 1100 || fr > 1100))mode = 0; break;
-                }
-			if(!firstirda && mode != 1) mode = 2; 
+         
 			if( flag == 0x07){	flag = 0x0;}		
 		
 
 /*===================================CODE========================================*/
 
-	masssum = 0;
-	momsum = 0; 
-	for(num1 = 0; num1 < N-1; num1++){
-		masssum += datch[num1];
-		momsum += dists[num1] * datch[num1];
-	}
 	turn = 0;
 	turns = 0;
 	add=0;
-	if(sl3 > black) {turn += 9; turns++;}
-	if(sl2 > black) {turn += 6; turns++;}
-	if(sl1 > black) {turn += 3; turns++;}
-	if(sr1 > black) {turn -= 3; turns++;}
-	if(sr2 > black) {turn -= 6; turns++;}
-	if(sr3 > black) {turn -= 9; turns++;}
-	if(sc > black) {turns++;}
-	if(turns == 1 && sl3 > black) add = 500;
-	if(turns == 1 && sr3 > black) add = -500;
+	if(sl3 < datch) {turn += 9; turns++;}
+	if(sl2 < datch) {turn += 6; turns++;}
+	if(sl1 < datch) {turn += 3; turns++;}
+	if(sr1 < datch) {turn -= 3; turns++;}
+	if(sr2 < datch) {turn -= 6; turns++;}
+	if(sr3 < datch) {turn -= 9; turns++;}
+	if(sc < datch) {turns++;}
+	if(turns == 1 && sl3 < datch) add = 500;
+	if(turns == 1 && sr3 < datch) add = -500;
 
 
 /* ================================= Send data to PC Terminal ===============================*/ 
@@ -483,29 +406,16 @@ void a2d_sensors (void)
         
    }    
 /***********************************************************/ 
-       for(num1 = 0; num1 < N; num1++){
-			for(num2 = 0; num2 < M-1; num2++){
-				vals[num1][num2] = vals[num1][num2+1];
-			}	
-			vals[num1][M-1] = a2d_data[num1];
-			srval = 0;	
-			for(num2 = 0; num2 < M; num2++){
-				srval += vals[num1][num2];
-			}
-			int myvar;
-			srval /= M;
-			datch[num1] = 1000 - mapper(srval,mins[num1], maxs[num2], 0, 1000);
-		}
-		recalc();
-        /*sl3 = mapper(a2d_data[0x00], mins[0],maxs[0],0,1000);// * 0.8571;
-        sl2 = mapper(a2d_data[0x01], mins[1],maxs[1],0,1000);// *  0.787;
-        sl1 = mapper(a2d_data[0x02], mins[2],maxs[2],0,1000);// * 1.0714;
-        sc  = mapper(a2d_data[0x03], mins[3],maxs[3],0,1000);// * 0.00122;
-        sr1 = mapper(a2d_data[0x04], mins[4],maxs[4],0,1000);// * 1.2765;;
-        sr2 = mapper(a2d_data[0x05], mins[5],maxs[5],0,1000);// * 0.80808;
-        sr3 = mapper(a2d_data[0x06], mins[6],maxs[6],0,1000);// * 0.9756;
-        ss =  mapper(a2d_data[0x07], mins[7],maxs[7],0,1000);// * 0.00122;
-        */             
+       
+        sl3 = a2d_data[0x00];// * 0.8571;
+        sl2 = a2d_data[0x01];// *  0.787;
+        sl1 = a2d_data[0x02];// * 1.0714;
+        sc  = a2d_data[0x03];// * 0.00122;
+        sr1 = a2d_data[0x04];// * 1.2765;;
+        sr2 = a2d_data[0x05];// * 0.80808;
+        sr3 = a2d_data[0x06];// * 0.9756;
+        ss =  a2d_data[0x07];// * 0.00122;
+                    
         fl = a2d_data[0x08];//* 0.00122;
         fr = a2d_data[0x09];// * 0.00122;
         rl = a2d_data[0x0a];// *0.00122;
@@ -625,16 +535,7 @@ void SPI1_A2D_init (void)
 /*======================================================*/ 
 
 void recount(void){
-	if(masssum > 1500)
-		curservo = max(2650-690, min(2650 + 690, 2650 + mapper(momsum / masssum, -20, 20, -690, 690) + add));		
-	else {
-		curservo = prevservo;
-		PDC1 = curservo;
-		return;
-	}
-	if(abs(curservo - 2650) > 200){
-		curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo) + add;	
-	}
+	curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo);	
 	prevservo = curservo;
 	PDC1 = curservo;
 }
@@ -647,29 +548,33 @@ int main (void)
 	mode = 0;
     while(1)
     {
-		recount();
-		if(rl > 1500 || rr > 1500 || fl > 2500 || fr > 1500) mode = 1;
 		if(mode == 0){
+			recount();
 			pwm = 800;
-			//PORTEbits.RE1 = 0;
-		}
-		else if(mode == 1){
-			pwm = 0;
-			//PORTEbits.RE1 = 1;
-		}
-		else if(mode == 2){
+			if(fl > 1500) mode = 2;	
+		}	
+		if(mode == 2){
 			pwm = 750;
-			if(ss > black && abs(curservo - 2650) < 150 && turns < 7) mode = 1;
-			//PORTEbits.RE1 = 1;
+			PDC1 = 2650 + 690;
+			while(turntimer) turntimer--;
+			turntimer = __N;
+			mode = 3;
 		}
-		else if(mode == 3){
-			while(stoptimer){
-				//PORTEbits.RE1 = 1;
-				pwm = 0;
-				stoptimer--;
-			}
+		if(mode == 3){
+			recount();
+			pwm = 800;
+			if(fl > 1500) mode = 4;	
+		}
+		if(mode == 4){
+			PDC1 = 2650 - 690;
 			pwm = 750;
-			mode = 0;
+			while(turntimer) turntimer--;
+			turntimer = __N;
+			mode = 5;
+		}
+		if(mode == 5){
+			pwm = 850;
+			recount();
 		}
 
 	}
