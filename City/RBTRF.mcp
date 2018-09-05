@@ -52,13 +52,13 @@ file_006=no
 file_007=no
 [FILE_INFO]
 file_000=main.c
-file_001=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\float.h
-file_002=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\math.h
-file_003=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\stdio.h
-file_004=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\stdlib.h
-file_005=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\time.h
-file_006=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\support\generic\h\libpic30.h
-file_007=C:\Program Files (x86)\Microchip\mplabc30\v3.31\support\dsPIC30F\h\p30F4011.h
+file_001=C:\Program Files (x86)\Microchip\MPLAB C30\include\float.h
+file_002=C:\Program Files (x86)\Microchip\MPLAB C30\include\math.h
+file_003=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdio.h
+file_004=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdlib.h
+file_005=C:\Program Files (x86)\Microchip\MPLAB C30\support\dsPIC30F\h\p30F4011.h
+file_006=C:\Program Files (x86)\Microchip\MPLAB C30\support\generic\h\libpic30.h
+file_007=C:\Program Files (x86)\Microchip\MPLAB C30\include\time.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
@@ -76,3 +76,9 @@ Pre-Build=
 Pre-BuildEnabled=1
 Post-Build=
 Post-BuildEnabled=1
+[TOOL_LOCKING]
+ToolsAreLocked=1
+T{DE18EB1A-B46B-486B-B96F-A811A635DFAC}=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-as.exe
+T{069BD372-6CA0-40D4-BF2F-5DC806D05083}=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+T{433C3D55-811D-409D-A6BF-159CF9355B42}=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+T{159ECAA5-9E6A-480A-B384-7EFD8D3BE1B4}=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ar.exe

@@ -1,3 +1,4 @@
+
 #include<p30f4011.h>
 #include<stdio.h>
 #include<math.h>
@@ -160,8 +161,8 @@ void initialization (void)
         SEVTCMP             = 0x0000;
         PWMCON1             = 0x0001;
         PWMCON2             = 0x0000;
-        OVDCON              = 0x0101;
-        
+		OVDCON				= 0x0101;
+        TRISE = 0;
 /* compare output PWM  */
 
         OC1CON      = 0x0000;
@@ -177,8 +178,8 @@ void initialization (void)
         ADPCFG  = 0xffff;    /* 1 = Analog input pin in Digital mode */
         I2CCON  = 0x0000;
         
-        TRISE = 0x01fc;     /* servo->RE0  pin_38 (output servo_motor) */
-        PDC1 = 0x0add;      /* servo motor PWM */            
+        //TRISE = 0x01fc;     /* servo->RE0F  pin_38 (output servo_motor) */
+        //PDC1 = 0x0add;      /* servo motor PWM */            
 
         TRISDbits.TRISD0 = 0; /* dir */
         TRISDbits.TRISD2 = 0; /* pwm */
@@ -198,10 +199,6 @@ void initialization (void)
        
         TRISBbits.TRISB2  = 1;    /*  run => 1, stop =>0  */
         
-        
-        
-        TRISEbits.TRISE1 = 0;     /* test point */
-       
         //PORTEbits.RE1 = 0;
   
         dir=1;
@@ -616,43 +613,17 @@ void SPI1_A2D_init (void)
 
 
 
-void recount(void){
-	if(masssum > 1500)
-		curservo = max(2650-690, min(2650 + 690, 2650 + mapper(momsum / masssum, -20, 20, -690, 690) + add));		
-	else {
-		pwm = 850;
-		curservo = prevservo;
-		PDC1 = curservo;
-		return;
-	}
-	pwm = 850;
-	if(abs(curservo - 2650) > 200){
-		curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo) + add;
-		pwm = 800;	
-	}
-	prevservo = curservo;
-	PDC1 = curservo;
-}
 
 int main (void)
 {
 	__C30_UART = 2;
 	initialization ();
 	uart2_rs232_init ();
-	mode = 0;
-	pwm = 800;
-	printf( " SL3 \t");
-	printf( " SL2 \t");
-	printf( " SL1 \t");
-	printf( " SC \t");
-	printf( " SR1 \t");
-	printf( " SR2 \t");
-	printf( " SR3 \t");
-	printf( " SS \t");
-	printf("\n");
+	pwm = 0;
+	PORTE |= 0x007e;
 	while(1)
     {
-		recount();
+
 	}
 
        

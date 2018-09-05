@@ -52,13 +52,13 @@ file_006=no
 file_007=no
 [FILE_INFO]
 file_000=main.c
-file_001=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\float.h
-file_002=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\math.h
-file_003=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\stdio.h
-file_004=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\stdlib.h
-file_005=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\include\lega-c\time.h
-file_006=C:\Users\newroot\Desktop\FocRot_FW-master\C30\v3.31\support\generic\h\libpic30.h
-file_007=C:\Program Files (x86)\Microchip\mplabc30\v3.31\support\dsPIC30F\h\p30F4011.h
+file_001=C:\Program Files (x86)\Microchip\MPLAB C30\include\float.h
+file_002=C:\Program Files (x86)\Microchip\MPLAB C30\include\math.h
+file_003=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdio.h
+file_004=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdlib.h
+file_005=C:\Program Files (x86)\Microchip\MPLAB C30\include\time.h
+file_006=C:\Program Files (x86)\Microchip\MPLAB C30\support\dsPIC30F\h\p30F4011.h
+file_007=C:\Program Files (x86)\Microchip\MPLAB C30\support\generic\h\libpic30.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=

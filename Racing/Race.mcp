@@ -52,13 +52,13 @@ file_006=no
 file_007=no
 [FILE_INFO]
 file_000=main.c
-file_001=C:\Program Files (x86)\Microchip\MPLAB C30\include\float.h
-file_002=C:\Program Files (x86)\Microchip\MPLAB C30\include\math.h
-file_003=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdio.h
-file_004=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdlib.h
-file_005=C:\Program Files (x86)\Microchip\MPLAB C30\include\time.h
-file_006=C:\Program Files (x86)\Microchip\MPLAB C30\support\dsPIC30F\h\p30F4011.h
-file_007=C:\Program Files (x86)\Microchip\MPLAB C30\support\generic\h\libpic30.h
+file_001=C:\Program Files (x86)\Microchip\MPLAB C30\support\generic\h\libpic30.h
+file_002=C:\Program Files (x86)\Microchip\MPLAB C30\support\dsPIC30F\h\p30F4011.h
+file_003=C:\Program Files (x86)\Microchip\MPLAB C30\include\float.h
+file_004=C:\Program Files (x86)\Microchip\MPLAB C30\include\math.h
+file_005=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdio.h
+file_006=C:\Program Files (x86)\Microchip\MPLAB C30\include\stdlib.h
+file_007=C:\Program Files (x86)\Microchip\MPLAB C30\include\time.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=

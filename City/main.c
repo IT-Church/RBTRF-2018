@@ -9,6 +9,9 @@
 #define SDA_tris TRISC4
 #define N 8
 #define M 5
+#define __N (long long)1000000
+#define POWER 840
+#define DIST 1690
 #define ACK  1
 #define NACK 0
 _FOSC(CSW_FSCM_OFF & XT_PLL8);
@@ -16,8 +19,8 @@ _FWDT(WDT_OFF);
 
 unsigned char flag = 0x00, i = 0, init = 1, f = 1, traffic_data, y = 1;
 
-unsigned int  ch = 0, w = 0, pwm = 0x0200, test = 0xd356, temp, dir=1, mode=0, black=700, stoptimer = 6000, flag1, add = 0,curservo = 2650, prevservo = 2650, firstirda = 0, num1, num2;
-
+unsigned int  ch = 0, w = 0, pwm = 0x0200, test = 0xd356, temp, dir=1, mode=0, black=690, flag1, add = 0,curservo = 2650, prevservo = 2650, firstirda = 0, num1, num2, myvar, start;
+long long it, stoptimer = __N;
 float        sl3 = 0,   /* AN0, stripe sensor -> left 3 */
              sl2 = 0,   /* AN1, stripe sensor -> left 2 */
              sl1 = 0,   /* AN2, stripe sensor -> left 1 */
@@ -25,18 +28,18 @@ float        sl3 = 0,   /* AN0, stripe sensor -> left 3 */
              sr1 = 0,   /* AN4, stripe sensor -> right 1 */
              sr2 = 0,   /* AN5, stripe sensor -> right 2 */
              sr3 = 0,   /* AN6, stripe sensor -> right 3 */
-             ss = 0,    /* AN7, stripe sensor -> stop */ 
-/* */             
+             ss = 0,    /* AN7, stripe sensor -> stop */
+/* */
              fl,    /* AN8, left front distance sensor */
              fr,    /* AN9, right front distance sensor */
              rl,    /* AN10, left rear distance sensor */
              rr,    /* AN11, right rear distance sensor */
 			 turn,
 			turns, srval, masssum, momsum;
-          
 
-	        
-             
+
+
+
 unsigned char h,l;
 
 unsigned int    received_data [0x0a] = {0};
@@ -59,11 +62,11 @@ float mapper(float val, float smin,float smax, float dmin, float dmax){
 }
 
 int mins[] = {
-	56, 83, 79, 83, 71, 93, 67, 63 	
+	56, 83, 79, 83, 71, 93, 67, 63
 };
 int maxs[] = {
 	1781, 1800, 1273, 1049, 1317, 1716, 1934, 1693
-}; 
+};
 float vals[N][M];
 float datch[N];
 float dists[] = {40, 30, 17, 0, -17, -30, -40};
@@ -110,12 +113,21 @@ void recalc(){
 	ss = datch[7];
 }
 
-
+void biton(int id){
+//	PORTE |= 1 << id;
+}
+void bitok(int id){
+	PORTE |= 1 << id;
+}
+void bitoff(int id){
+	unsigned int maxint = 0xffff;
+	PORTE &= maxint - (1<<id);
+}
 
 
 void initialization (void)
 	{
-    	
+
 /* Interrupt control register */
 
         SRbits.IPL      = 1;    /* CPU Interrupt Priority Level Status bits, 100 = CPU interrupt priority level is 4 (12) */
@@ -128,8 +140,8 @@ void initialization (void)
 
 		TMR1		= 0x0000;	/* Timer1 register for the Timer0 module  */
 		PR1 		= 0x30;		/* Period register  for the Timer1 module  */
-    	T1CON		= 0x8030;	/* 16-bit 1:1 prescale value */	
-    	
+    	T1CON		= 0x8030;	/* 16-bit 1:1 prescale value */
+
         IPC0bits.T1IP   = 2;    		/* Priority */
         IEC0bits.T1IE 	= 1;		    /* Enables the TMR1 overflow interrupt */
         IFS0bits.T1IF 	= 0;		    /* TMR1 Overflow Interrupt Flag bit */
@@ -149,7 +161,7 @@ void initialization (void)
         T3CON       = 0x8010;
         TMR3        = 0x0000;
         PR3         = 0x77ff;
-        
+
         IPC1bits.T3IP   = 3;    		/* Priority */
         IEC0bits.T3IE 	= 1;		    /* Enables the TMR2 overflow interrupt */
         IFS0bits.T3IF 	= 0;		    /* TMR2 Overflow Interrupt Flag bit */
@@ -158,12 +170,12 @@ void initialization (void)
 
         PTCON               = 0x8008;
         PTMR                = 0x0000;
-        PTPER               = 0x47fe; 
+        PTPER               = 0x47fe;
         SEVTCMP             = 0x0000;
         PWMCON1             = 0x0001;
         PWMCON2             = 0x0000;
         OVDCON              = 0x0101;
-        
+        TRISE = 0;
 /* compare output PWM  */
 
         OC1CON      = 0x0000;
@@ -172,69 +184,69 @@ void initialization (void)
         OC3R        = 0x0000;
         IEC1bits.OC3IE	= 1;
         IFS1bits.OC3IF	= 0;
- 
-                        
+
+
 /* I/O init */
-        
+
         ADPCFG  = 0xffff;    /* 1 = Analog input pin in Digital mode */
         I2CCON  = 0x0000;
-        
-        TRISE = 0x01fc;     /* servo->RE0  pin_38 (output servo_motor) */
-        PDC1 = 0x0add;      /* servo motor PWM */            
+
+        //TRISE = 0x01fc;     /* servo->RE0  pin_38 (output servo_motor) */
+        //PDC1 = 0x0add;      /* servo motor PWM */
 
         TRISDbits.TRISD0 = 0; /* dir */
         TRISDbits.TRISD2 = 0; /* pwm */
-        
-        
+
+
         TRISCbits.TRISC13 = 0;    /* TX1 */
         TRISCbits.TRISC14 = 1;    /* RX1 */
         TRISFbits.TRISF4  = 1;    /* RX2 */
         TRISFbits.TRISF5  = 0;    /* TX2 */
-        
+
         TRISFbits.TRISF6  = 0;    /*  sck */
         TRISFbits.TRISF3  = 0;    /*  sdo */
         TRISFbits.TRISF2  = 1;    /*  sdi */
         TRISFbits.TRISF0  = 0;    /*  cs  */
         TRISFbits.TRISF1  = 1;    /*  oec */
-       
-       
+
+
         TRISBbits.TRISB2  = 1;    /*  run => 1, stop =>0  */
-        
-        
-        
-        TRISEbits.TRISE1 = 0;     /* test point */
-       
+
+
+
+        TRISE = 0;     /* test point */
+
         //PORTEbits.RE1 = 0;
-  
+
         dir=1;
-        OC3RS = 0x0001;      /* DC motor PWM */        
-         
+        OC3RS = 0x0001;      /* DC motor PWM */
+
 	}
 
 
 /*=================================================================================PRINT FUNCTIONS=======================================================================================================================================*/
 
-void _ISR  __attribute__((auto_psv))  _T1Interrupt( void)  
+void _ISR  __attribute__((auto_psv))  _T1Interrupt( void)
 	{
 
 
 		if( y == 1)
     	{
-	    	printf("Robotraffic 2012, A2D test \n");
+	    	//printf("Robotraffic 2012, A2D test \n");
 	    	y = 0;
 
-    	}  
-    	 	
-		if( y == 0)  
-		{ 
-			uart1A_IrDA_init(); 
+    	}
+
+		if( y == 0)
+		{
+			uart1A_IrDA_init();
 			SPI1_A2D_init();
 			y = 2;
 		}
 		if( y== 2)
 		{
 			a2d_sensors();
-		
+
 		}
 
 		if ( flag1 == 0x01ff)
@@ -263,9 +275,9 @@ void _ISR  __attribute__((auto_psv))  _T1Interrupt( void)
 			flag1 = 0;
 
 		}
-		
-			
-			
+
+
+
 /*
 Traffic Light ID;
 RED             = 0x00,
@@ -287,23 +299,27 @@ uart1A_IrDA_init();
 */
                 switch ((int)received_data [0])
                 {
-                             
-                        case 0x00:  if(mode != 1) mode = 2; break; 
-						case 0x01:  if(mode != 1) mode = 2; break;  
-                        case 0x02:  mode = 0; break;
-                        case 0x03:  mode = 0; break;
-                        case 0x04:  if(mode != 1) mode = 2; break;
-						case 0x06:  mode = 3; break;
-                        default:  if(!(rl > 1100 || rr > 1100 || fl > 1100 || fr > 1100))mode = 0; break;
+
+                        case 0x00:  bitok(4);if(mode != 1 && mode != 4) mode = 2; break;
+						case 0x01:  bitok(3);if(mode != 1 && mode != 4) mode = 2; break;
+                        case 0x02:  bitok(2);
+									start = 1;
+									mode = 0; break;
+                        case 0x03:  bitok(1);mode = 0; break;
+                        case 0x04:  bitok(3);
+									bitok(4);if(mode != 1 && mode != 4) mode = 2; break;
+						case 0x06:  bitok(2);
+									bitok(1);if(stoptimer > 0 && start == 2) mode = 3; break;
+                        default: break;
                 }
-			if(!firstirda && mode != 1) mode = 2; 
-			if( flag == 0x07){	flag = 0x0;}		
-		
+			if(start == 0) mode = 2;
+			if( flag == 0x07){	flag = 0x0;}
+
 
 /*===================================CODE========================================*/
 
 	masssum = 0;
-	momsum = 0; 
+	momsum = 0;
 	for(num1 = 0; num1 < N-1; num1++){
 		masssum += datch[num1];
 		momsum += dists[num1] * datch[num1];
@@ -322,9 +338,9 @@ uart1A_IrDA_init();
 	if(turns == 1 && sr3 > black) add = -500;
 
 
-/* ================================= Send data to PC Terminal ===============================*/ 
+/* ================================= Send data to PC Terminal ===============================*/
 
-/* ================================= Car driving controll =================================*/ 
+/* ================================= Car driving controll =================================*/
 
 
 
@@ -334,35 +350,35 @@ uart1A_IrDA_init();
         if ( pwm > 0x3ff) pwm = 0x3ff; OC3RS = pwm;
 		TRISDbits.TRISD0=dir;
 		flag1++;
-		
-		
+
+
         IFS0bits.T1IF 	= 0;
     }
-    
+
 /*==============================================================================PID FUNCTION==========================================================================================================================================*/
 
-void _ISR  __attribute__((auto_psv))  _T2Interrupt( void)  
+void _ISR  __attribute__((auto_psv))  _T2Interrupt( void)
 	{
-	
+
 
 	IFS0bits.T2IF 	= 0;
-	}    
+	}
 
 /*================================================================================TRAFIC FUNCTIONS========================================================================================================================================*/
 
-void _ISR  __attribute__((auto_psv))  _T3Interrupt( void)  
+void _ISR  __attribute__((auto_psv))  _T3Interrupt( void)
 	{
 			IFS0bits.T3IF 	= 0;
-	}    
+	}
 /*======================================================*/
- void _ISR  __attribute__((auto_psv))  _U1RXInterrupt( void)  
+ void _ISR  __attribute__((auto_psv))  _U1RXInterrupt( void)
 	{
-		
+
     	if(flag == 0x00)
 	    {
     	    for(i=0;i<0x01;i++)
 			{
-    			while(!IFS0bits.U1RXIF){	
+    			while(!IFS0bits.U1RXIF){
 				/* set when register is not empty */
 				continue;
 				}
@@ -370,53 +386,53 @@ void _ISR  __attribute__((auto_psv))  _T3Interrupt( void)
 				received_data [i] = U1RXREG;
 			//	f4++;
 			}
-				
+
 		    flag = 0x07;
-	    }		
-	    
-	    IFS0bits.U1RXIF	= 0;	
+	    }
+
+	    IFS0bits.U1RXIF	= 0;
 	}
-/*======================================================*/      
 /*======================================================*/
- 
+/*======================================================*/
+
 void uart2_rs232_init (void)
 	{
     	/* Fcy 7.3728 MHZ  */
-    	
+
 		U2MODE		= 0x8000;		/* Transmit status and control register */
 		U2STA		= 0x84c0;		/* Receve status and control register */
 		U2BRG		= 0x0007;     	/* Baund rate control register  115200 bps */
-	
-		IPC6bits.U2RXIP      = 2;   /* Receiver Interrupt Priority bits */	
+
+		IPC6bits.U2RXIP      = 2;   /* Receiver Interrupt Priority bits */
 		IEC1bits.U2RXIE 	 = 1;	/* Enable RS232 interrupts */
-		IFS1bits.U2RXIF 	 = 0;	
+		IFS1bits.U2RXIF 	 = 0;
 	}
-	
+
 /*======================================================*/
- 
+
 void uart1A_IrDA_init (void)
 	{
     	/* Fcy 7.3728 MHZ  */
-   	
+
 		U1MODE		= 0x8400;		/* U1ATX Transmit status and control register */
 		U1STA		= 0x8400;		/* Receve status and control register */
 		U1BRG		= 0x0007;     	/* Baund rate control register  115200 bps */
-		
+
 //		IPC2bits.U1RXIP      = 3;   /* Receiver Interrupt Priority bits */
 		IPC2bits.U1RXIP      = 3;   /* Receiver Interrupt Priority bits */
 
 		IEC0bits.U1RXIE 	 = 1;	/* Enable RS232 interrupts */
-		IFS0bits.U1RXIF  	 = 0;	
+		IFS0bits.U1RXIF  	 = 0;
 	}
-			
-/*======================================================*/ 
-void putch (char byte) 
+
+/*======================================================*/
+void putch (char byte)
 {
-	while(!IFS1bits.U2TXIF)		
+	while(!IFS1bits.U2TXIF)
 	continue;
 	U2TXREG = byte;
 	IFS1bits.U2TXIF = 0;
-}  
+}
 
 /*======================================================*/
 void a2d_sensors (void)
@@ -425,70 +441,70 @@ void a2d_sensors (void)
 /***** R E A D  Ch_ 0 ************************************/
 
     for(ch=0;ch<0xc;ch++)
-    { 
+    {
         /***********************************/
         SPI1CON     = 0x0323;
         SPI1CONbits.MODE16 = 0;
-               
-        PORTFbits.RF0	= 0; //cs		= 0;  
+
+        PORTFbits.RF0	= 0; //cs		= 0;
 		SPI1BUF	= 0x18;
 		while(!IFS0bits.SPI1IF)
 		continue;
-        temp = SPI1BUF;  	    
+        temp = SPI1BUF;
 		IFS0bits.SPI1IF      = 0;
-        PORTFbits.RF0	= 1; //		cs = 1;     
+        PORTFbits.RF0	= 1; //		cs = 1;
 
         for(w=0;w<0xb;w++) { asm("NOP"); }
-        
+
         /***********************************/
         SPI1CON     = 0x0323;
         SPI1CONbits.MODE16 = 1;
-               
-        PORTFbits.RF0	= 0; //        cs		= 0;  
+
+        PORTFbits.RF0	= 0; //        cs		= 0;
 		SPI1BUF	= 0x6a00;
 		while(!IFS0bits.SPI1IF)
 		continue;
-        temp = SPI1BUF;  	    
+        temp = SPI1BUF;
 		IFS0bits.SPI1IF      = 0;
-        PORTFbits.RF0	= 1; //		cs = 1;     
+        PORTFbits.RF0	= 1; //		cs = 1;
 
         for(w=0;w<0xb;w++) { asm("NOP"); }
-        
+
         /***********************************/
         SPI1CON     = 0x0323;
         SPI1CONbits.MODE16 = 0;
-               
-        PORTFbits.RF0	= 0; //        cs		= 0;  
+
+        PORTFbits.RF0	= 0; //        cs		= 0;
 		SPI1BUF	= a2d_channels[ch];
 		while(!IFS0bits.SPI1IF)
 		continue;
-        temp = SPI1BUF;  	    
+        temp = SPI1BUF;
 		IFS0bits.SPI1IF      = 0;
-        PORTFbits.RF0	= 1; //		cs = 1;     
+        PORTFbits.RF0	= 1; //		cs = 1;
 
         for(w=0;w<0xb;w++) { asm("NOP"); }
-        
-        SPI1CON     = 0x0323;          
+
+        SPI1CON     = 0x0323;
         SPI1CONbits.MODE16 = 1;
 		SPI1CONbits.DISSDO = 1;
-		
+
         PORTFbits.RF0	= 0; //		cs  = 0;
 		SPI1BUF = 0x0000;
 	    while(!IFS0bits.SPI1IF)
 		continue;
 		a2d_data[ch] = SPI1BUF;
-		IFS0bits.SPI1IF      = 0;  
+		IFS0bits.SPI1IF      = 0;
         PORTFbits.RF0	= 1; //        cs = 1;
-        asm("NOP"); asm("NOP"); asm("NOP"); asm("NOP"); 
-        
-   }    
-/***********************************************************/ 
+        asm("NOP"); asm("NOP"); asm("NOP"); asm("NOP");
+
+   }
+/***********************************************************/
        for(num1 = 0; num1 < N; num1++){
 			for(num2 = 0; num2 < M-1; num2++){
 				vals[num1][num2] = vals[num1][num2+1];
-			}	
+			}
 			vals[num1][M-1] = a2d_data[num1];
-			srval = 0;	
+			srval = 0;
 			for(num2 = 0; num2 < M; num2++){
 				srval += vals[num1][num2];
 			}
@@ -505,25 +521,25 @@ void a2d_sensors (void)
         sr2 = mapper(a2d_data[0x05], mins[5],maxs[5],0,1000);// * 0.80808;
         sr3 = mapper(a2d_data[0x06], mins[6],maxs[6],0,1000);// * 0.9756;
         ss =  mapper(a2d_data[0x07], mins[7],maxs[7],0,1000);// * 0.00122;
-        */             
+        */
         fl = a2d_data[0x08];//* 0.00122;
         fr = a2d_data[0x09];// * 0.00122;
         rl = a2d_data[0x0a];// *0.00122;
         rr = a2d_data[0x0b];// *0.00122;
-           
-/***********************************************************/       
+
+/***********************************************************/
     }
 /*======================================================*/
 
 void SPI1_A2D_init (void)
 {
-/***** R E S E T ****************************************/     
+/***** R E S E T ****************************************/
         SPI1STAT    = 0x8000;
         SPI1CON     = 0x0323;
-        
-	    IFS0bits.SPI1IF      = 0;	    
-        IEC0bits.SPI1IE      = 1; 
-        IPC2bits.SPI1IP     = 2;     
+
+	    IFS0bits.SPI1IF      = 0;
+        IEC0bits.SPI1IE      = 1;
+        IPC2bits.SPI1IP     = 2;
 
         PORTFbits.RF0	= 0; //        cs		= 0;    /* A2D chip select enable */
 		SPI1BUF	= 0x10;   /* reset */
@@ -531,17 +547,17 @@ void SPI1_A2D_init (void)
 		continue;
 		IFS0bits.SPI1IF      = 0;
         PORTFbits.RF0	= 1; //		cs = 1;
-		
-/********** S E T U P *********************************************/        
+
+/********** S E T U P *********************************************/
         SPI1STAT    = 0x8000;
         SPI1CON     = 0x0323;
-        
-        SPI1CONbits.MODE16 = 1; 
-        
-	    IFS0bits.SPI1IF      = 0;	    
-        IEC0bits.SPI1IE      = 1; 
-        IPC2bits.SPI1IP     = 2; 
-             
+
+        SPI1CONbits.MODE16 = 1;
+
+	    IFS0bits.SPI1IF      = 0;
+        IEC0bits.SPI1IE      = 1;
+        IPC2bits.SPI1IP     = 2;
+
         PORTFbits.RF0	= 0; //        cs = 0;
 		SPI1BUF	= 0x6a00;   /* setup */
 		while(!IFS0bits.SPI1IF)
@@ -549,60 +565,60 @@ void SPI1_A2D_init (void)
 		IFS0bits.SPI1IF      = 0;
         PORTFbits.RF0	= 1; //		cs = 1;
 
-/********** A V E R A G I N G *******************************************/        
+/********** A V E R A G I N G *******************************************/
         SPI1STAT    = 0x8000;
         SPI1CON     = 0x0323;
-        SPI1CONbits.MODE16 = 0; 
-	    IFS0bits.SPI1IF      = 0;	    
-        IEC0bits.SPI1IE      = 1; 
-        IPC2bits.SPI1IP     = 2;     
+        SPI1CONbits.MODE16 = 0;
+	    IFS0bits.SPI1IF      = 0;
+        IEC0bits.SPI1IE      = 1;
+        IPC2bits.SPI1IP     = 2;
         PORTFbits.RF0	= 0; //        cs = 0;
 		SPI1BUF	= 0x20;
 		while(!IFS0bits.SPI1IF)
 		continue;
 		IFS0bits.SPI1IF      = 0;
         PORTFbits.RF0	= 1; //		cs = 1;
-						
-/******** R E S E T  F I F O ********************************/        		
+
+/******** R E S E T  F I F O ********************************/
         SPI1STAT    = 0x8000;
         SPI1CON     = 0x0323;
-        
-	    IFS0bits.SPI1IF      = 0;	    
-        IEC0bits.SPI1IE      = 1; 
-        IPC2bits.SPI1IP     = 2;     
+
+	    IFS0bits.SPI1IF      = 0;
+        IEC0bits.SPI1IE      = 1;
+        IPC2bits.SPI1IP     = 2;
         PORTFbits.RF0	= 0; //        cs = 0;
-		SPI1BUF	= 0x18;   
+		SPI1BUF	= 0x18;
 		while(!IFS0bits.SPI1IF)
 		continue;
 		IFS0bits.SPI1IF      = 0;
-        PORTFbits.RF0	= 1; //		cs = 1;	
-				
+        PORTFbits.RF0	= 1; //		cs = 1;
+
 /***********************************************************/
         SPI1STAT    = 0x8000;
         SPI1CON     = 0x0323;
-               
-	    IFS0bits.SPI1IF      = 0;	    
-        IEC0bits.SPI1IE      = 1; 
-        IPC2bits.SPI1IP     = 2;     
 
-        PORTFbits.RF0	= 0; //        cs		= 0;   
-        
+	    IFS0bits.SPI1IF      = 0;
+        IEC0bits.SPI1IE      = 1;
+        IPC2bits.SPI1IP     = 2;
+
+        PORTFbits.RF0	= 0; //        cs		= 0;
+
 		SPI1BUF	= 0x00de;
 		while(!IFS0bits.SPI1IF)
 		continue;
-        temp = SPI1BUF;  	    
+        temp = SPI1BUF;
 		IFS0bits.SPI1IF      = 0;
-		
-        PORTFbits.RF0	= 1; //		cs = 1;     
+
+        PORTFbits.RF0	= 1; //		cs = 1;
 
         for(w=0;w<0x80;w++)
 		{
-   		    asm("NOP"); 
+   		    asm("NOP");
         }
 
         SPI1STAT    = 0x8000;
-        SPI1CON     = 0x0323;          
-        SPI1CONbits.MODE16 = 1; 
+        SPI1CON     = 0x0323;
+        SPI1CONbits.MODE16 = 1;
 
         PORTFbits.RF0	= 0; //		cs  = 0;
 		SPI1CONbits.DISSDO = 1;
@@ -612,31 +628,45 @@ void SPI1_A2D_init (void)
 	    while(!IFS0bits.SPI1IF)
 		continue;
 		temp = SPI1BUF;
-		IFS0bits.SPI1IF      = 0;  
-        PORTFbits.RF0	= 1; //        cs = 1;  
- 
-/***********************************************************/       
-	    IFS0bits.SPI1IF      = 0;	    
-        IEC0bits.SPI1IE      = 1; 
-        IPC2bits.SPI1IP     = 2;   
+		IFS0bits.SPI1IF      = 0;
+        PORTFbits.RF0	= 1; //        cs = 1;
+
+/***********************************************************/
+	    IFS0bits.SPI1IF      = 0;
+        IEC0bits.SPI1IE      = 1;
+        IPC2bits.SPI1IP     = 2;
 }
 
-/*======================================================*/	
-/*======================================================*/ 
+/*======================================================*/
+/*======================================================*/
+
+void led(int sv){
+	for(myvar = 1; myvar <= 5; myvar++){
+		bitoff(myvar);
+	}
+	if(sv - 2650 < -300){
+		biton(3);
+	}
+	else if(sv - 2650 > 300){
+		biton(4);
+	}
+}
 
 void recount(void){
 	if(masssum > 1500)
-		curservo = max(2650-690, min(2650 + 690, 2650 + mapper(momsum / masssum, -20, 20, -690, 690) + add));		
+		curservo = max(2650-690, min(2650 + 690, 2650 + mapper(momsum / masssum, -20, 20, -690, 690) + add));
 	else {
 		curservo = prevservo;
 		PDC1 = curservo;
+		led(curservo);
 		return;
 	}
-	if(abs(curservo - 2650) > 200){
-		curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo) + add;	
+	if(abs(curservo - 2650) > 300){
+		curservo = (turns ? 2650 + (int) 750 * (turn / turns) / 9 : prevservo) + add;
 	}
 	prevservo = curservo;
 	PDC1 = curservo;
+	led(curservo);
 }
 
 int main (void)
@@ -644,37 +674,51 @@ int main (void)
 	__C30_UART = 2;
 	initialization ();
 	uart2_rs232_init ();
-	mode = 0;
-    while(1)
+	start = 0;
+	while(1)
     {
 		recount();
-		if(rl > 1500 || rr > 1500 || fl > 2500 || fr > 1500) mode = 1;
+		if(rr > DIST || fl > DIST + 500 || fr > DIST) mode = 4;
 		if(mode == 0){
-			pwm = 800;
+			pwm = POWER;
 			//PORTEbits.RE1 = 0;
 		}
 		else if(mode == 1){
 			pwm = 0;
+			biton(3);
+			biton(4);
 			//PORTEbits.RE1 = 1;
 		}
 		else if(mode == 2){
-			pwm = 750;
-			if(ss > black && abs(curservo - 2650) < 150 && turns < 7) mode = 1;
+			pwm = POWER - 50;
+			if(ss > black && abs(curservo - 2650) < 300 && turns < 7) mode = 1;
 			//PORTEbits.RE1 = 1;
 		}
 		else if(mode == 3){
-			while(stoptimer){
-				//PORTEbits.RE1 = 1;
+			pwm = POWER - 50;
+			biton(2);
+			if(ss > black && abs(curservo - 2650) < 300 && turns < 7) {
 				pwm = 0;
-				stoptimer--;
+				stoptimer = __N;
+				while(stoptimer > 0){
+					stoptimer--;
+				}
+				pwm = POWER - 50;
+				mode = 0;
+				stoptimer = 0;
+				bitoff(2);
 			}
-			pwm = 750;
-			mode = 0;
 		}
-
+		else if(mode == 4){
+			pwm = 0;
+			biton(5);
+			if(rr < DIST && fl < DIST + 500 && fr < DIST) {
+				start = 2;
+				mode = 0;
+			}
+		}
 	}
-
-       
 }
 /*======================================================*/
 /*======================================================*/
+
